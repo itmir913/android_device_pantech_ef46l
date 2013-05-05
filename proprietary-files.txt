@@ -37,8 +37,8 @@ lib/libchromatix_ov8820_default_video.so
 lib/libchromatix_ov8820_preview.so
 lib/libchromatix_ov8820_video_hd.so
 lib/libchromatix_ov8820_zsl.so
-lib/libchromatix_s5k3h2_default_video.so
-lib/libchromatix_s5k3h2_preview.so
+#lib/libchromatix_s5k3h2_default_video.so
+#lib/libchromatix_s5k3h2_preview.so
 lib/libchromatix_s5k3l1yx_default_video.so
 lib/libchromatix_s5k3l1yx_hfr_120fps.so
 lib/libchromatix_s5k3l1yx_hfr_60fps.so
@@ -48,14 +48,17 @@ lib/libchromatix_s5k3l1yx_video_hd.so
 lib/libchromatix_s5k3l1yx_zsl.so
 lib/libchromatix_s5k4e1_default_video.so
 lib/libchromatix_s5k4e1_preview.so
-lib/libchromatix_vx6953_default_video.so
-lib/libchromatix_vx6953_preview.so
+#lib/libchromatix_vx6953_default_video.so
+#lib/libchromatix_vx6953_preview.so
 lib/hw/camera.msm8960.so
 lib/libcamera_client.so
 lib/libgemini.so
 lib/libmmcamera_faceproc.so
 lib/libmmcamera_frameproc.so
-lib/libmmcamera_statsproc30.so
+#lib/libmmcamera_statsproc30.so
+# VegaRecer2 JellyBean
+lib/libmmcamera_statsproc31.so
+# End
 lib/libmmipl.so
 lib/libmmjpeg.so
 lib/liboemcamera.so
@@ -111,7 +114,10 @@ lib/libskytestclient.so
 
 # pantech_server libs
 lib/libpantech_qcci.so
-lib/libmtc.so
+#lib/libmtc.so
+# VR2
+lib/libmtp.so
+# END
 lib/libpantech_wifi_mac_backup.so
 lib/libpantech_wifi_mac_rw.so
 lib/libwcnftmp.so
