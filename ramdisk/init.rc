@@ -25,6 +25,9 @@ loglevel 3
 
 # setup the global environment
     export PATH /sbin:/vendor/bin:/system/sbin:/system/bin:/system/xbin
+# busybox install (eng build) [FEATURE_SKY_DS_BUSYBOX_INSTALL]--> 
+    export PATH /sbin:/vendor/bin:/system/sbin:/system/bin:/system/xbin:/data/busybox
+# <-- busybox install (eng build) [FEATURE_SKY_DS_BUSYBOX_INSTALL]
     export LD_LIBRARY_PATH /vendor/lib:/system/lib
     export ANDROID_BOOTLOGO 1
     export ANDROID_ROOT /system
@@ -178,7 +181,19 @@ on post-fs-data
     # give system access to wpa_supplicant.conf for backup and restore
     mkdir /data/misc/wifi 0770 wifi wifi
     chmod 0660 /data/misc/wifi/wpa_supplicant.conf
+
+# pcu_p11800 [FEATURE_SKT_VE]
+    mkdir /data/ve 0777 radio radio
+
+# create directory for DMB
+    mkdir /data/misc/dmb 0771 media media
+    mkdir /data/misc/dmb/content 0771 media media
+
     mkdir /data/local 0751 root root
+    chmod 2770 /data/radio
+
+# p12455 - FEATURE_PANTECH_HOPPIN_DRM
+	mkdir /data/playready 0770 media media
 
     # For security reasons, /data/local/tmp should always be empty.
     # Do not place files or directories in /data/local/tmp
@@ -209,11 +224,27 @@ on post-fs-data
     # the following directory.
     mkdir /data/drm 0770 drm drm
 
+    # create directory for Audio Effect(QSound) by p11157_20121029
+    mkdir /data/misc/audioeffect 0777 system system
+
     # If there is no fs-post-data action in the init.<device>.rc file, you
     # must uncomment this line, otherwise encrypted filesystems
     # won't work.
     # Set indication (checked by vold) that we have finished this action
     #setprop vold.post_fs_data_done 1
+
+# cpmgr pipe [FEATURE_SKY_CP_MANAGER_DAEMON_INTERFACE]
+    mkdir /dev/cpmgr
+    chown radio radio /dev/cpmgr
+# end cpmgr
+
+#FEATURE_SKY_DS_CTS_ROOT_PROCESS
+    mkdir /dev/pantech
+    chown system system /dev/pantech
+
+# --> FEATURE_SKY_DS_WIFI_IWLAN
+    mkdir /dev/iwland 0755 root wifi
+# <-- FEATURE_SKY_DS_WIFI_IWLAN
 
 # Include extra init file
     import /init.cm.rc
@@ -224,8 +255,40 @@ on boot
     hostname localhost
     domainname localdomain
 
+# 20121017 P12116_BT_SYSTEM BT LE Power Class 1
+    setprop qcom.bt.le_dev_pwr_class 1
+
 # set RLIMIT_NICE to allow priorities from 19 to -20
     setrlimit 13 40 40
+
+# CONFIG_PN544
+    chmod 0600 /dev/pn544
+    chown nfc nfc /dev/pn544
+# Touch
+    chmod 0666 /dev/touch_fops
+    chmod 0666 /dev/qt602240
+  # set SKY-LCD density to 320dpi  [LS2-LCD]
+	setprop ro.sf.lcd_density 320  
+	chown system system /sys/class/graphics/fb0/cabc_ctl
+	chmod 0664 /sys/class/graphics/fb0/cabc_ctl
+	chown system system /sys/class/graphics/fb0/encryption
+	chmod 0664 /sys/class/graphics/fb0/encryption	
+
+# create symlink for fb1 as HDMI
+	symlink /dev/graphics/fb1 /dev/graphics/hdmi
+
+# setup permissions for fb1 related nodes
+	chown system graphics /sys/class/graphics/fb1/hpd
+	chmod 0664 /sys/devices/virtual/graphics/fb1/hpd
+	chmod 0664 /sys/devices/virtual/graphics/fb1/video_mode
+	chmod 0664 /sys/devices/virtual/graphics/fb1/format_3d
+	chown system graphics /sys/class/graphics/fb1/hdmi_ready
+	chmod 0664 /sys/devices/virtual/graphics/fb1/hdmi_ready
+
+# Change owner and group for media server and surface flinger
+	chown system system /sys/devices/virtual/graphics/fb1/format_3d
+#PANTECH_CHARGER_MONITOR_TEST or PANTECH_BATTERY_CHARING_DISCHARING_TEST
+	chmod 0666 /dev/pm8921-charger
 
 # Memory management.  Basic kernel parameters, and allow the high
 # level system server to be able to adjust the kernel OOM driver
@@ -248,6 +311,7 @@ on boot
     chown radio system /sys/android_power/acquire_partial_wake_lock
     chown radio system /sys/android_power/release_wake_lock
     chown system system /sys/power/state
+    chown system system /sys/power/autosleep
     chown system system /sys/power/wakeup_count
     chown radio system /sys/power/wake_lock
     chown radio system /sys/power/wake_unlock

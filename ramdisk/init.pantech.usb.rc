@@ -1,4 +1,14 @@
 # pantech usb composition
+on early-init
+    # 120926 LS2 Warfs for otg_storage
+    export OTG_STORAGE /storage/otg_storage
+    mkdir /storage/otg_storage 0775 system system
+    symlink /storage/otg_storage /otg_storage
+    symlink /storage/otg_storage /mnt/otg_storage
+
+on boot
+    chmod 0666 /dev/obex
+
 on usb-charging-mode
 	write /sys/class/android_usb/android0/enable 0
 	write /sys/class/android_usb/android0/f_diag/clients diag
@@ -8,81 +18,8 @@ on usb-charging-mode
 	write /sys/devices/platform/android_usb/usb_charging_mode serial,diag
 	write /sys/class/android_usb/android0/enable 1
 
-# adb
-on property:sys.usb.config=serial,diag,obex
-    write /sys/class/android_usb/android0/functions $sys.usb.config
-    setprop sys.usb.state $sys.usb.config
-    setprop persist.pantech.usb.current pc_mode
-    setprop persist.pantech.usb.default pc_mode
-
-on property:sys.usb.config=serial,diag,obex,adb
-    write /sys/class/android_usb/android0/functions $sys.usb.config
-    setprop sys.usb.state $sys.usb.config
-    setprop persist.pantech.usb.current pc_mode
-    setprop persist.pantech.usb.default pc_mode
-
-# mtp
-on property:sys.usb.config=mtp
-    write /sys/class/android_usb/android0/functions $sys.usb.config
-    setprop sys.usb.state $sys.usb.config
-    setprop persist.pantech.usb.current mtp_mode
-    setprop persist.pantech.usb.default mtp_mode
-
-on property:sys.usb.config=mtp,adb
-    write /sys/class/android_usb/android0/functions $sys.usb.config
-    setprop sys.usb.state $sys.usb.config
-    setprop persist.pantech.usb.current mtp_mode
-    setprop persist.pantech.usb.default mtp_mode
-
-# ptp
-on property:sys.usb.config=ptp
-    write /sys/class/android_usb/android0/functions $sys.usb.config
-    setprop sys.usb.state $sys.usb.config
-    setprop persist.pantech.usb.current ptp_mode
-    setprop persist.pantech.usb.default ptp_mode
-
-on property:sys.usb.config=ptp,adb
-    write /sys/class/android_usb/android0/functions $sys.usb.config
-    setprop sys.usb.state $sys.usb.config
-    setprop persist.pantech.usb.current ptp_mode
-    setprop persist.pantech.usb.default ptp_mode
-
-# mass_storage
-on property:sys.usb.config=mass_storage
-    write /sys/class/android_usb/android0/functions $sys.usb.config
-    setprop sys.usb.state $sys.usb.config
-    setprop persist.pantech.usb.current ums_mode
-    setprop persist.pantech.usb.default ums_mode
-
-on property:sys.usb.config=mass_storage,adb
-    write /sys/class/android_usb/android0/functions $sys.usb.config
-    setprop sys.usb.state $sys.usb.config
-    setprop persist.pantech.usb.current ums_mode
-    setprop persist.pantech.usb.default ums_mode
-
-# usb tethering
-on property:sys.usb.config=rndis
-    stop adbd
-    write /sys/class/android_usb/android0/enable 0
-    write /sys/class/android_usb/android0/idVendor 10a9
-    write /sys/class/android_usb/android0/idProduct 1104
-    write /sys/class/android_usb/android0/bDeviceClass 239
-    write /sys/class/android_usb/android0/bDeviceSubClass 2
-    write /sys/class/android_usb/android0/bDeviceProtocol 1
+on property:sys.usb.config=*
     write /sys/class/android_usb/android0/functions ${sys.usb.config}
-    write /sys/class/android_usb/android0/enable 1
-    setprop sys.usb.state ${sys.usb.config}
-
-on property:sys.usb.config=rndis,adb
-    write /sys/class/android_usb/android0/enable 0
-    write /sys/class/android_usb/android0/idVendor 10a9
-    write /sys/class/android_usb/android0/idProduct 1104
-    write /sys/class/android_usb/android0/bDeviceClass 239
-    write /sys/class/android_usb/android0/bDeviceSubClass 2
-    write /sys/class/android_usb/android0/bDeviceProtocol 1
-    write /sys/class/android_usb/android0/functions ${sys.usb.config}
-    write /sys/class/android_usb/android0/enable 1
-    start adbd
     setprop sys.usb.state ${sys.usb.config}
 
 on property:persist.service.adb.enable=1
