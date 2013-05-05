@@ -48,8 +48,23 @@ TARGET_USE_CUSTOM_LUN_FILE_PATH := "/sys/devices/platform/msm_hsusb/gadget/lun%d
 # Kernel
 BOARD_KERNEL_BASE := 0x80200000
 BOARD_KERNEL_PAGE_SIZE := 2048
-BOARD_KERNEL_CMDLINE := console=ttyHSL0,115200,n8 androidboot.hardware=qcom androidboot.carrier=LGT-KOR user_debug=31 msm_rtb.filter=0x3F loglevel=0 androidboot.emmc=true
+BOARD_KERNEL_CMDLINE := console=ttyHSL0,115200,n8 androidboot.hardware=qcom androidboot.carrier=SKT-KOR user_debug=31 msm_rtb.filter=0x3F ehci-hcd.park=3 maxcpus=2 loglevel=0
+# Ramdiskaddr is 0x82400000, You should need --ramdisk_offset
 BOARD_FORCE_RAMDISK_ADDRESS := 0x82400000
+# mkbootimg --cmdline "console=ttyHSL0,115200,n8 androidboot.hardware=qcom androidboot.carrier=SKT-KOR user_debug=31 msm_rtb.filter=0x3F ehci-hcd.park=3 maxcpus=2 loglevel=0" --base 0x80200000 --pagesize 2048 --kernel kernel --ramdisk ramdisk.gz --ramdiskaddr 0x82400000 -o boot.img
+
+#  boot.img unpacking imformation
+#Page size: 2048 (0x00000800)
+#Kernel size: 5754568 (0x0057cec8)
+#Ramdisk size: 1187166 (0x00121d5e)
+#Second size: 0 (0x00000000)
+#Board name: 
+#Command line: console=ttyHSL0,115200,n8 androidboot.hardware=qcom androidboot.carrier=SKT-KOR user_debug=31 msm_rtb.filter=0x3F ehci-hcd.park=3 maxcpus=2 loglevel=0
+#Writing boot.img-kernel ... complete.
+#Writing boot.img-ramdisk.gz ... complete.
+#BOARD_KERNEL_CMDLINE console=ttyHSL0,115200,n8 androidboot.hardware=qcom androidboot.carrier=SKT-KOR user_debug=31 msm_rtb.filter=0x3F ehci-hcd.park=3 maxcpus=2 loglevel=0
+#BOARD_KERNEL_BASE 80200000
+#BOARD_PAGE_SIZE 00000800
 
 # Vibrator
 BOARD_HAS_VIBRATOR_IMPLEMENTATION := ../../device/pantech/ef46l/vibrator/vibrator.c
@@ -114,3 +129,5 @@ TARGET_RECOVERY_PIXEL_FORMAT := RGBX_8888
 BOARD_HAS_NO_SELECT_BUTTON := true
 TARGET_USERIMAGES_USE_EXT4 := true
 BOARD_SUPPRESS_EMMC_WIPE := true
+# Recovery Graphics fix
+RECOVERY_GRAPHICS_USE_LINELENGTH := true
