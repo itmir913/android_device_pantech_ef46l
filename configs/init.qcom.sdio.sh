@@ -1,5 +1,5 @@
 #!/system/bin/sh
-# Copyright (c) 2010, Code Aurora Forum. All rights reserved.
+# Copyright (c) 2010, The Linux Foundation. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -10,7 +10,7 @@
 #       copyright notice, this list of conditions and the following
 #       disclaimer in the documentation and/or other materials provided
 #       with the distribution.
-#     * Neither the name of Code Aurora Forum, Inc. nor the names of its
+#     * Neither the name of The Linux Foundation nor the names of its
 #       contributors may be used to endorse or promote products derived
 #      from this software without specific prior written permission.
 #
@@ -36,41 +36,41 @@ target=`getprop ro.board.platform`
 
 case "$target" in
     "msm7627_6x")
-        echo "$arg" > /sys/devices/platform/msm_sdcc.1/polling
-        echo "$arg" > /sys/devices/platform/msm_sdcc.2/polling
+        echo 1 > /sys/devices/platform/msm_sdcc.1/polling
+        echo 1 > /sys/devices/platform/msm_sdcc.2/polling
         ;;
 
     "msm7627_ffa")
-        echo "$arg" > /sys/devices/platform/msm_sdcc.2/polling
+        echo 1 > /sys/devices/platform/msm_sdcc.2/polling
         ;;
 
     "msm7627_surf")
-        echo "$arg" > /sys/devices/platform/msm_sdcc.1/polling
-        echo "$arg" > /sys/devices/platform/msm_sdcc.2/polling
+        echo 1 > /sys/devices/platform/msm_sdcc.1/polling
+        echo 1 > /sys/devices/platform/msm_sdcc.2/polling
         ;;
 
     "msm7627a")
-        echo "$arg" > /sys/devices/platform/msm_sdcc.2/polling
+        echo 1 > /sys/devices/platform/msm_sdcc.2/polling
         ;;
 
     "msm7630_surf")
-        echo "$arg" > /sys/devices/platform/msm_sdcc.3/polling
+        echo 1 > /sys/devices/platform/msm_sdcc.3/polling
         ;;
 
     "msm7630_1x")
-        echo "$arg" > /sys/devices/platform/msm_sdcc.3/polling
+        echo 1 > /sys/devices/platform/msm_sdcc.3/polling
         ;;
 
     "msm7630_fusion")
-        echo "$arg" > /sys/devices/platform/msm_sdcc.3/polling
+        echo 1 > /sys/devices/platform/msm_sdcc.3/polling
         ;;
 
     "msm8660")
-        echo "$arg" > /sys/devices/platform/msm_sdcc.4/polling
+        echo 1 > /sys/devices/platform/msm_sdcc.4/polling
         ;;
 
     "msm8660_csfb")
-        echo "$arg" > /sys/devices/platform/msm_sdcc.4/polling
+        echo 1 > /sys/devices/platform/msm_sdcc.4/polling
         ;;
 esac
 

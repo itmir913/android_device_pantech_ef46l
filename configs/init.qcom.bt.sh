@@ -1,5 +1,5 @@
 #!/system/bin/sh
-# Copyright (c) 2009-2011, Code Aurora Forum. All rights reserved.
+# Copyright (c) 2009-2012, The Linux Foundation. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
@@ -8,7 +8,7 @@
 #     * Redistributions in binary form must reproduce the above copyright
 #       notice, this list of conditions and the following disclaimer in the
 #       documentation and/or other materials provided with the distribution.
-#     * Neither the name of Code Aurora nor
+#     * Neither the name of The Linux Foundation nor
 #       the names of its contributors may be used to endorse or promote
 #       products derived from this software without specific prior written
 #       permission.
@@ -25,6 +25,9 @@
 # OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
+
+#Read the arguments passed to the script
+config="$1"
 
 BLUETOOTH_SLEEP_PATH=/proc/bluetooth/sleep/proto
 LOG_TAG="qcom-bluetooth"
@@ -48,6 +51,105 @@ failed ()
   exit $2
 }
 
+program_bdaddr ()
+{
+  /system/bin/btnvtool -O
+  logi "Bluetooth Address programmed successfully"
+}
+
+#
+# enable bluetooth profiles dynamically
+#
+config_bt ()
+{
+  baseband=`getprop ro.baseband`
+  target=`getprop ro.board.platform`
+  soc_hwid=`cat /sys/devices/system/soc/soc0/id`
+  btsoc=`getprop qcom.bluetooth.soc`
+  btsysname=`getprop ro.product.sys_name`
+
+  case $baseband in
+    "apq")
+        setprop ro.qualcomm.bluetooth.opp true
+        setprop ro.qualcomm.bluetooth.ftp true
+        setprop ro.qualcomm.bluetooth.nap false
+        setprop ro.qualcomm.bluetooth.sap false
+        setprop ro.qualcomm.bluetooth.dun false
+        # For MPQ as baseband is same for both
+        case $soc_hwid in
+          "130")
+              setprop ro.qualcomm.bluetooth.hsp true
+              setprop ro.qualcomm.bluetooth.hfp true
+              setprop ro.qualcomm.bluetooth.pbap false
+              setprop ro.qualcomm.bluetooth.map false
+              ;;
+          *)
+              setprop ro.qualcomm.bluetooth.hsp false
+              setprop ro.qualcomm.bluetooth.hfp false
+              setprop ro.qualcomm.bluetooth.pbap true
+              setprop ro.qualcomm.bluetooth.map true
+              ;;
+        esac
+        ;;
+    "mdm" | "svlte2a" | "svlte1" | "csfb")
+        setprop ro.qualcomm.bluetooth.opp true
+        setprop ro.qualcomm.bluetooth.hfp true
+        setprop ro.qualcomm.bluetooth.hsp true
+        setprop ro.qualcomm.bluetooth.pbap true
+        setprop ro.qualcomm.bluetooth.ftp true
+        setprop ro.qualcomm.bluetooth.map true
+        setprop ro.qualcomm.bluetooth.nap true
+        setprop ro.qualcomm.bluetooth.sap true
+        setprop ro.qualcomm.bluetooth.dun false
+        ;;
+    "msm")
+        setprop ro.qualcomm.bluetooth.opp true
+        setprop ro.qualcomm.bluetooth.hfp true
+        setprop ro.qualcomm.bluetooth.hsp true
+        setprop ro.qualcomm.bluetooth.pbap true
+        setprop ro.qualcomm.bluetooth.ftp true
+        setprop ro.qualcomm.bluetooth.nap true
+	# +++ [P12523] BT_SYS setting about unsupported profile
+        setprop ro.qualcomm.bluetooth.sap false
+        setprop ro.qualcomm.bluetooth.dun false
+        case $btsysname in
+          "STARQ")
+              setprop ro.qualcomm.bluetooth.map true
+              ;;
+          *)
+              setprop ro.qualcomm.bluetooth.map false
+              ;;
+        esac
+	# --- [P12523] BT_SYS setting about unsupported profile
+        ;;
+    *)
+        setprop ro.qualcomm.bluetooth.opp true
+        setprop ro.qualcomm.bluetooth.hfp true
+        setprop ro.qualcomm.bluetooth.hsp true
+        setprop ro.qualcomm.bluetooth.pbap true
+        setprop ro.qualcomm.bluetooth.ftp true
+        setprop ro.qualcomm.bluetooth.map true
+        setprop ro.qualcomm.bluetooth.nap true
+        setprop ro.qualcomm.bluetooth.sap true
+        setprop ro.qualcomm.bluetooth.dun true
+        ;;
+  esac
+
+  #Enable Bluetooth Profiles specific to target Dynamically
+  case $target in
+    "msm8960")
+       if [ "$btsoc" != "ath3k" ] && [ "$soc_hwid" != "130" ]
+       then
+           setprop ro.bluetooth.hfp.ver 1.6
+           setprop ro.qualcomm.bt.hci_transport smd
+       fi
+       ;;
+    *)
+       ;;
+  esac
+
+}
+
 start_hciattach ()
 {
   /system/bin/hciattach -n $BTS_DEVICE $BTS_TYPE $BTS_BAUD &
@@ -64,6 +166,17 @@ kill_hciattach ()
   kill -TERM $hciattach_pid
   # this shell doesn't exit now -- wait returns for normal exit
 }
+
+logi "init.qcom.bt.sh config = $config"
+case "$config" in
+    "onboot")
+        program_bdaddr
+        config_bt
+        exit 0
+        ;;
+    *)
+        ;;
+esac
 
 # mimic hciattach options parsing -- maybe a waste of effort
 USAGE="hciattach [-n] [-p] [-b] [-t timeout] [-s initial_speed] <tty> <type | id> [speed] [flow|noflow] [bdaddr]"
@@ -85,7 +198,9 @@ shift $(($OPTIND-1))
 #Selectively Disable sleep
 BOARD=`getprop ro.board.platform`
 
+# BR/EDR & LE power class configurations
 POWER_CLASS=`getprop qcom.bt.dev_power_class`
+LE_POWER_CLASS=`getprop qcom.bt.le_dev_pwr_class`
 
 #find the transport type
 TRANSPORT=`getprop ro.qualcomm.bt.hci_transport`
@@ -103,7 +218,19 @@ case $POWER_CLASS in
      logi "Power Class: To override, Before turning BT ON; setprop qcom.bt.dev_power_class <1 or 2 or 3>";;
 esac
 
-eval $(/system/bin/hci_qcomm_init -e $PWR_CLASS && echo "exit_code_hci_qcomm_init=0" || echo "exit_code_hci_qcomm_init=1")
+case $LE_POWER_CLASS in
+  1) LE_PWR_CLASS="-P 0" ;
+     logi "LE Power Class: 1";;
+  2) LE_PWR_CLASS="-P 1" ;
+     logi "LE Power Class: 2";;
+  3) LE_PWR_CLASS="-P 2" ;
+     logi "LE Power Class: CUSTOM";;
+  *) LE_PWR_CLASS="-P 1";
+     logi "LE Power Class: Ignored. Default(2) used (1-CLASS1/2-CLASS2/3-CUSTOM)";
+     logi "LE Power Class: To override, Before turning BT ON; setprop qcom.bt.le_dev_pwr_class <1 or 2 or 3>";;
+esac
+
+eval $(/system/bin/hci_qcomm_init -e $PWR_CLASS $LE_PWR_CLASS && echo "exit_code_hci_qcomm_init=0" || echo "exit_code_hci_qcomm_init=1")
 
 case $exit_code_hci_qcomm_init in
   0) logi "Bluetooth QSoC firmware download succeeded, $BTS_DEVICE $BTS_TYPE $BTS_BAUD $BTS_ADDRESS";;

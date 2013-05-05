@@ -1,5 +1,5 @@
 #!/system/bin/sh
-# Copyright (c) 2011, Code Aurora Forum. All rights reserved.
+# Copyright (c) 2011-2012, Code Aurora Forum. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -38,7 +38,7 @@ cd /firmware/image
 # Get the list of files in /firmware/image
 # for which sym links have to be created
 
-fwfiles=`ls modem* q6* wcnss* dsps* tzapps*`
+fwfiles=`ls modem* q6* wcnss* dsps* tzapps* gss*`
 modem_fwfiles=`ls modem_fw.mdt`
 
 # Check if the links with similar names
@@ -85,8 +85,6 @@ esac
 case $linksNeeded in
    1)
       cd /firmware/image
-      #20120302 jylee tmp for 1032
-      mount -t ext4 -o remount,rw,barrier=0 /dev/block/mmcblk0p13 /system
 
       # Check if need to select modem firmware and do rename in first boot
       case $fixModemFirmware in
@@ -163,10 +161,16 @@ case $linksNeeded in
          *)
             log -p w -t PIL 8960 device but no tzapps image found;;
       esac
-   
-      #20120302 jylee tmp for 1032
-      #remount file system as read only 
-      mount -t ext4 -o remount,ro,barrier=0 /dev/block/mmcblk0p13 /system
+
+      case `ls gss.mdt 2>/dev/null` in
+         gss.mdt)
+            for imgfile in gss*; do
+               ln -s /firmware/image/$imgfile /system/etc/firmware/$imgfile 2>/dev/null
+            done
+            break;;
+         *)
+            log -p w -t No gss image found;;
+      esac
       break;;
 
    *)
