@@ -100,7 +100,8 @@ PRODUCT_COPY_FILES += \
 # Kernel modules
 PRODUCT_COPY_FILES += \
     device/pantech/ef46l/modules/wlan.ko:/system/lib/modules/wlan.ko \
-    device/pantech/ef46l/modules/mwlan_aarp.ko:/system/lib/modules/mwlan_aarp.ko
+    device/pantech/ef46l/modules/prima_wlan.ko:/system/lib/modules/prima/prima_wlan.ko
+#    device/pantech/ef46l/modules/mwlan_aarp.ko:/system/lib/modules/mwlan_aarp.ko
 
 # Nfc lib
 PRODUCT_COPY_FILES += \
