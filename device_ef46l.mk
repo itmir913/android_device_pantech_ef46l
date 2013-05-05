@@ -146,6 +146,8 @@ PRODUCT_COPY_FILES += \
     device/pantech/ef46l/dsp/snd_soc_msm/Voice_Call_IP_2x:/system/etc/snd_soc_msm/Voice_Call_IP_2x
 
 # Uplus Appmarket
+# I don't Know.. com.lge.core.jar and com.lge.mass.jar
+# There are not two file in framework..
 PRODUCT_COPY_FILES += \
     device/pantech/ef46l/uapps/com.lge.core.jar:system/framework/com.lge.core.jar \
     device/pantech/ef46l/uapps/com.lge.mass.jar:system/framework/com.lge.mass.jar
