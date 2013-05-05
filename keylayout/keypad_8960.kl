@@ -116,3 +116,7 @@ key 766   FOCUS
 key 528   CAMERA
 key 14    DEL               WAKE_DROPPED
 key 41	  GRAVE				WAKE_DROPPED
+
+#p11223_20120426
+key 249  MESSAGE             WAKE_DROPPED
+key 250  BROWSER             WAKE_DROPPED
