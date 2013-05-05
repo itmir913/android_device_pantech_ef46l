@@ -1,6 +1,6 @@
 #
 # system.prop for ef46l
-# cm-10.1 by Mir
+# cm-10.1 by Mir(LucidOS Team) for VegaRacer2 JellyBean
 #
 rild.libpath=/system/lib/libril-qc-qmi-1.so
 rild.libargs=-d /dev/smd0
