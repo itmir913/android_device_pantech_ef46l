@@ -52,8 +52,9 @@ PRODUCT_COPY_FILES += \
     device/pantech/ef46l/firmware/a300_pm4.fw:/system/etc/firmware/a300_pm4.fw \
     device/pantech/ef46l/firmware/leia_pfp_470.fw:/system/etc/firmware/leia_pfp_470.fw \
     device/pantech/ef46l/firmware/leia_pm4_470.fw:/system/etc/firmware/leia_pm4_470.fw \
-    device/pantech/ef46l/firmware/cyttsp_8960_cdp.hex:/system/etc/firmware/cyttsp_8960_cdp.hex \
     device/pantech/ef46l/firmware/vidc_1080p.fw:/system/etc/firmware/vidc_1080p.fw
+# JB firmware
+#    device/pantech/ef46l/firmware/cyttsp_8960_cdp.hex:/system/etc/firmware/cyttsp_8960_cdp.hex \
 
 # GPS config
 PRODUCT_COPY_FILES += device/common/gps/gps.conf_AS:system/etc/gps.conf
