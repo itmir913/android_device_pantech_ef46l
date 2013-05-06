@@ -50,7 +50,8 @@ BOARD_KERNEL_BASE := 0x80200000
 BOARD_KERNEL_PAGE_SIZE := 2048
 BOARD_KERNEL_CMDLINE := console=ttyHSL0,115200,n8 androidboot.hardware=qcom androidboot.carrier=SKT-KOR user_debug=31 msm_rtb.filter=0x3F ehci-hcd.park=3 maxcpus=2 loglevel=0
 # Ramdiskaddr is 0x82400000, You should need --ramdisk_offset
-BOARD_FORCE_RAMDISK_ADDRESS := 0x82400000
+#BOARD_FORCE_RAMDISK_ADDRESS := 0x82400000
+BOARD_MKBOOTIMG_ARGS := 0x82400000
 # mkbootimg --cmdline "console=ttyHSL0,115200,n8 androidboot.hardware=qcom androidboot.carrier=SKT-KOR user_debug=31 msm_rtb.filter=0x3F ehci-hcd.park=3 maxcpus=2 loglevel=0" --base 0x80200000 --pagesize 2048 --kernel kernel --ramdisk ramdisk.gz --ramdiskaddr 0x82400000 -o boot.img
 
 #  boot.img unpacking imformation
